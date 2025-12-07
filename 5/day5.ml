@@ -36,7 +36,7 @@ let part1 l =
   let values = grab_values [] l in
   are_values_in_ranges 0 ranges values
 
-(* Part 2 *)
+(* Part 2 - REALLY SLOW WAY, takes a super long time *)
 
 let rec max_number max = function
   | [] -> max
@@ -46,16 +46,20 @@ let rec min_number min = function
   | [] -> min
   | h :: t -> if fst h < min then min_number (fst h) t else min_number min t
 
-let rec generate_values min max = Seq.ints min |> Seq.map (fun x -> x + 1) |> Seq.take max
+let generate_values checklist min max =
+  Seq.iterate succ (succ min) 
+  |> Seq.take max
+  |> Seq.filter (fun x -> Seq.exists ((=) x) checklist)
 
-(*let rec combine_range acc range = function*)
+let rec unpack_ranges acc = function
+  | [] -> acc
+  | h :: t ->
+    let _ = print_endline @@ string_of_int @@ fst h in
+    unpack_ranges (Seq.append (generate_values acc (fst h) (snd h)) acc) t
 
 let part2 l =
   let ranges = grab_ranges [] l in
-  let max = max_number 0 ranges in
-  let min = min_number 0 ranges in
-  let values = generate_values min max |> List.of_seq in
-  are_values_in_ranges 0 ranges values
-
+  let unique = unpack_ranges Seq.empty ranges in
+  Seq.length unique
 
 

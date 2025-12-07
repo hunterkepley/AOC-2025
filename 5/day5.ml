@@ -45,7 +45,6 @@ let generate_values checklist min max =
 let rec unpack_ranges acc = function
   | [] -> acc
   | h :: t ->
-    let _ = print_endline @@ string_of_int @@ fst h in
     unpack_ranges (Seq.append (generate_values acc (fst h) (snd h)) acc) t
 
 let part2 l =

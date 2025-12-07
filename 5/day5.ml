@@ -37,15 +37,6 @@ let part1 l =
   are_values_in_ranges 0 ranges values
 
 (* Part 2 - REALLY SLOW WAY, takes a super long time *)
-
-let rec max_number max = function
-  | [] -> max
-  | h :: t -> if snd h > max then max_number (snd h) t else max_number max t
-
-let rec min_number min = function
-  | [] -> min
-  | h :: t -> if fst h < min then min_number (fst h) t else min_number min t
-
 let generate_values checklist min max =
   Seq.iterate succ (succ min) 
   |> Seq.take max

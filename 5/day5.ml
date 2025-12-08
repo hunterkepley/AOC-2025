@@ -38,18 +38,41 @@ let part1 l =
 
 (* Part 2 - REALLY SLOW WAY, takes a super long time *)
 let generate_values checklist min max =
-  Seq.iterate succ (succ min) 
-  |> Seq.take max
-  |> Seq.filter (fun x -> Seq.exists ((=) x) checklist)
+  Seq.iterate succ (succ min) |> Seq.take (max - min)
+  |> Seq.map (fun x -> if Seq.exists ((=) x) checklist then -1 else x)
+  |> Seq.filter ((<>) ~-1)
 
 let rec unpack_ranges acc = function
   | [] -> acc
   | h :: t ->
     unpack_ranges (Seq.append (generate_values acc (fst h) (snd h)) acc) t
 
-let part2 l =
+let part2_slow l =
   let ranges = grab_ranges [] l in
   let unique = unpack_ranges Seq.empty ranges in
   Seq.length unique
 
+(* Part 2 - Solution which actually finishes in a lifetime *)
+let combine_ranges ranges =
+    let sorted = List.sort (fun x y -> compare (fst x) (fst y)) ranges in
+    let rec combine acc = function
+      | [] -> List.rev acc
+      | h :: t ->
+          match acc with
+          | [] -> combine [h] t
+          | last :: acc_rest ->
+              if (fst h) <= (snd last) + 1 then
+                let combined = (fst last, max (snd last) (snd h)) in
+                combine (combined :: acc_rest) t 
+              else
+                combine (h :: acc) t
+    in
+    combine [] sorted
+
+let part2 l =
+  let ranges = grab_ranges [] l in
+  let combined_ranges = combine_ranges ranges in
+  combined_ranges
+  |> List.fold_left (fun acc x -> acc + ((snd x) - (fst x))) 0
+  |> (+) (List.length combined_ranges)
 

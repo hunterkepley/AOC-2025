@@ -18,8 +18,6 @@ let rec create_problem_list acc = function
 
 let safe_mul x y = if y = 0 then x else x * y
 
-let ( ?* ) = safe_mul
-
 let rec solve_problems acc = function
   | [] -> acc
   | h :: t -> match h with
@@ -27,7 +25,7 @@ let rec solve_problems acc = function
     | op :: nums ->
       let _nums = List.map (fun x -> int_of_string x) nums in
       let ( !! ) = match op with
-        | "*" -> ( ?* )
+        | "*" -> ( safe_mul )
         | _ -> ( + )
       in
     solve_problems (acc + (List.fold_left (fun n x -> !! x n) 0 _nums)) t

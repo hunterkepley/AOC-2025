@@ -57,23 +57,23 @@ let rec hor_lines acc = function
     let hor_chunk = parse_chunk [] (create_list_of_string h) in
     hor_lines (List.map2 (fun x y -> ($) x ^ y) hor_chunk acc) t
 
-let rec create_hor_problems curr_prob acc num = function
+let rec create_hor_problems curr_prob acc = function
   | [] -> (curr_prob :: acc)
   | h :: t ->
     let _h = String.trim h in
-    if _h = "" then create_hor_problems [] (curr_prob :: acc) (num + 1) t else
+    if _h = "" then create_hor_problems [] (curr_prob :: acc) t else
     if _h.[0] = '+' || _h.[0] = '*' then
       let op = ($) _h.[0] in
       let num_str = String.sub _h 1 (String.length _h - 1) in
-      create_hor_problems (op :: (%%) num_str :: curr_prob) acc num t 
+      create_hor_problems (op :: (%%) num_str :: curr_prob) acc t 
     else
-      create_hor_problems ((%%) _h :: curr_prob) acc num t 
+      create_hor_problems ((%%) _h :: curr_prob) acc t 
       
 
 let part2 s =
   let lines = String.split_on_char '\n' s in
   let init_acc = List.init (String.length @@ List.nth lines 0) (fun _ -> "") in
   hor_lines init_acc lines
-  |> create_hor_problems [] [] 0
+  |> create_hor_problems [] []
   |> solve_problems 0
 

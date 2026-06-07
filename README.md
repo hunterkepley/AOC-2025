@@ -5,3 +5,4 @@ Advent of Code 2025
 
 To run, I used utop to parse the inputs into a list of strings (by newline delim). The challenges can be found on the official Advent of Code website, along with your personal puzzle inputs
 
+My solutions used 0% GenAI
